@@ -1,8 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -11,33 +9,28 @@ import java.io.IOException;
 
 public class View extends JPanel {
 
-    BufferedImage img;
+    BufferedImage wheelImg, backgroundImg;
     AffineTransformOp op;
     AffineTransform transform;
 
-    double i = 0;
     public View() {
         setVisible(true);
-        setPreferredSize(new Dimension(800, 800));
+        setPreferredSize(new Dimension(1920, 1080));
 
         try {
-            img = ImageIO.read(new File("resources/wheel.png"));
+            wheelImg = ImageIO.read(new File("resources/wheel.png"));
+            backgroundImg = ImageIO.read(new File("resources/background.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        spin();
-        Timer timer = new Timer(5, e -> {
-            i += 0.10;
-            spin();
-        });
-        timer.start();
+        transform(0);
     }
 
-    private void spin() {
-            transform = AffineTransform.getRotateInstance(i, img.getWidth() / 2, img.getHeight() / 2);
-            op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
-            repaint();
+    public void transform(double i) {
+        transform = AffineTransform.getRotateInstance(i, wheelImg.getWidth() / 2, wheelImg.getHeight() / 2);
+        op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
+        repaint();
     }
 
     @Override
@@ -50,6 +43,10 @@ public class View extends JPanel {
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHints(rh);
 
-            g2d.drawImage(op.filter(img, null), 100, 100, null);
+            g2d.drawImage(backgroundImg, 0, 0, (int) getPreferredSize().getWidth(), (int) getPreferredSize().getHeight(), null);
+            g2d.drawImage(op.filter(wheelImg, null), (int) getPreferredSize().getWidth() / 2 - wheelImg.getWidth() / 2, (int) getPreferredSize().getHeight() / 2 - wheelImg.getHeight() / 2, null);
+            g2d.setStroke(new BasicStroke(5));
+            g2d.setColor(Color.ORANGE);
+            g2d.drawLine((int) getPreferredSize().getWidth() / 2, (int) getPreferredSize().getHeight() / 2 - wheelImg.getHeight() / 2 - 10 , (int) getPreferredSize().getWidth() / 2, (int) getPreferredSize().getHeight() / 2 - wheelImg.getHeight() / 2 + 50);
     }
 }
