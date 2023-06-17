@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Roulette implements SerialConnectionHandler.SerialListener{
 
@@ -41,6 +42,19 @@ public class Roulette implements SerialConnectionHandler.SerialListener{
         }).start();
 
         SerialConnectionHandler serialConn = new SerialConnectionHandler(this);
+        //serialConn.read();
+
+            /*Scanner scanner = new Scanner(System.in);
+            byte[] data;
+            String s;
+            while (true) {
+                s = scanner.nextLine() + "\n";
+                data = new byte[s.length()];
+                for (int j = 0; j < s.length(); j++) {
+                    data[j] = (byte) s.charAt(j);
+                }
+                serialConn.write(data);
+            }*/
     }
 
     private void spin() {
@@ -79,15 +93,12 @@ public class Roulette implements SerialConnectionHandler.SerialListener{
         }
 
         if (mul2 < 0.0005) {
-            System.out.println((System.currentTimeMillis() - startTime) / 1000.0);
+            //System.out.println((System.currentTimeMillis() - startTime) / 1000.0);
         }
-
 
     }
     @Override
-    public void onValueRead(char c) {
-        if (c != 0) {
-            System.out.print(c);
-        }
+    public void onValueRead(String s) {
+            System.out.println("Abedula: " + s);
     }
 }
