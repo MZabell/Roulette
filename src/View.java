@@ -15,21 +15,32 @@ public class View extends JPanel {
     BufferedImage wheelImg, backgroundImg;
     AffineTransformOp op;
     AffineTransform transform;
-    ArrayList<JButton> buttons;
+    ArrayList<JButton> addButtons;
+
+    ArrayList<JButton> betButtons;
     ArrayList<JTextArea> textAreas;
+
+    ArrayList<JLabel> playerChipLabels;
+    PopupFactory pf;
+    BettingTable bettingTable;
 
     public View() {
         setVisible(true);
         setPreferredSize(new Dimension(1920, 1080));
         setLayout(null);
 
-        buttons = new ArrayList<>();
+        addButtons = new ArrayList<>();
+        betButtons = new ArrayList<>();
         textAreas = new ArrayList<>();
+        playerChipLabels = new ArrayList<>();
+
+        pf = PopupFactory.getSharedInstance();
+
         int x = 300, y = 100, w = 100, h = 50;
         for (int i = 0; i < 4; i++) {
             JButton button = new JButton("Add Player");
             button.setBounds(x, y, w, h);
-            buttons.add(button);
+            addButtons.add(button);
 
             y += 800;
 
@@ -39,9 +50,10 @@ public class View extends JPanel {
             }
         }
 
-        for (JButton b : buttons) {
+        for (JButton b : addButtons) {
             b.addActionListener(e -> {
-                JTextArea textArea = new JTextArea(JOptionPane.showInputDialog("Enter Player Name:") + "'s History");
+                String playerName = JOptionPane.showInputDialog("Enter Player Name:");
+                JTextArea textArea = new JTextArea(playerName + "'s History");
                 textArea.setLocation(b.getLocation());
                 textArea.setSize(200,200);
                 textArea.setEditable(false);
@@ -53,6 +65,33 @@ public class View extends JPanel {
                     b.setVisible(false);
                     add(textArea);
                 }
+
+                JButton button = new JButton("Bet");
+                button.setBounds(b.getX() + 50, b.getY() + 220, 100, 50);
+                betButtons.add(button);
+                add(button);
+
+                for (JButton bb : betButtons) {
+                    bb.addActionListener(e1 -> {
+                        JFrame popupFrame = new JFrame("Place your bet");
+                        bettingTable = new BettingTable();
+                        popupFrame.add(bettingTable);
+                        popupFrame.pack();
+                        popupFrame.setVisible(true);
+
+                        try {
+                            Popup popup = pf.getPopup(null, popupFrame, 0, 0);
+                            popup.show();
+                        } catch (IllegalArgumentException ignored) {}
+                        popupFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                    });
+                }
+
+                JLabel label = new JLabel("Credit: 0");
+                label.setFont(new Font("Robotto", Font.BOLD, 15));
+                label.setForeground(Color.WHITE);
+                label.setBounds(textArea.getX() + 50, textArea.getY() - 50, 200, 50);
+                add(label);
             });
             add(b);
         }
