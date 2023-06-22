@@ -21,8 +21,7 @@ public class SerialConnectionHandler {
         if (serialPort == null) {
             System.out.println("Device not found");
             return;
-        } else
-            isConnected = true;
+        }
 
         serialPort.openPort();
         serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);
