@@ -39,8 +39,14 @@ public class SerialConnectionHandler {
     public void read() {
         isRunning = true;
         serialThread = new Thread(() -> {
+            int i = 0;
+            byte[] readBuffer;
             while (isRunning) {
-                byte[] readBuffer = new byte[16];
+                if (i > 1) {
+                    readBuffer = new byte[2];
+                } else {
+                    readBuffer = new byte[1];
+                }
                 serialPort.readBytes(readBuffer, readBuffer.length);
                 //System.out.println(Arrays.toString(readBuffer));
                 //if (readBuffer[0] != START_MARKER) continue;
@@ -53,20 +59,35 @@ public class SerialConnectionHandler {
                 }*/
                 System.out.flush();
                 //char c = (char) readBuffer[0];
-                String s = new String(readBuffer);
-                listener.onValueRead(s);
+                short s = readBuffer[0];
+                if (i > 1) {
+                    s = (short) (s << 8);
+                    s |= readBuffer[1] & 0xff;
+                }
+                i++;
+                listener.onValueRead(s, i);
+                if (i > 6) {
+                    isRunning = false;
+                }
+            }
+            System.out.println("READ DONE");
+            try {
+                serialThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
         serialThread.start();
     }
 
     public void write(byte[] writeBuffer) {
-        isRunning = true;
         serialThread = new Thread(() -> {
-            while (isRunning) {
                 serialPort.writeBytes(writeBuffer, writeBuffer.length);
                 System.out.flush();
-                isRunning = false;
+            try {
+                serialThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
         serialThread.start();
@@ -82,6 +103,6 @@ public class SerialConnectionHandler {
     }
 
     public interface SerialListener {
-        void onValueRead(String s);
+        void onValueRead(short s, int i);
     }
 }

@@ -1,13 +1,10 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class BettingTable extends JPanel {
 
@@ -17,8 +14,12 @@ public class BettingTable extends JPanel {
 
     ArrayList<Point> placedBets;
 
-    int arg2 = 0, mode = 0;
-    public BettingTable() {
+    byte[] betVals;
+
+    short[] wagers;
+    JTextField wagerField;
+    int arg2 = 0, mode = 0, betNumber = 0;
+    public BettingTable(JFrame frame, View view, int playerNum) {
         setLayout(null);
         setVisible(true);
 
@@ -32,8 +33,10 @@ public class BettingTable extends JPanel {
         ArrayList<BetButton> lineList = new ArrayList<>();
         ArrayList<BetModeButton> modeButtons = new ArrayList<>();
 
-
         placedBets = new ArrayList<>();
+
+        betVals = new byte[4];
+        wagers = new short[4];
 
         int x = 130, y = 180;
 
@@ -46,7 +49,22 @@ public class BettingTable extends JPanel {
 
             BetButton button = new BetButton(i, x, y, 50, 77);
             button.addActionListener(e -> {
-                System.out.println(button.getBetVal());
+                //System.out.println(button.getBetVal());
+                betVals[betNumber] = (byte) button.getBetVal();
+                wagers[betNumber] = Short.parseShort(wagerField.getText());
+                betNumber++;
+                if (betNumber == 4) {
+                    byte[] temp = view.getBets();
+                    short[] temp2 = view.getWagers();
+                    for (int j = 0; j < betVals.length; j++) {
+                            temp[j + playerNum * 4] = betVals[j];
+                            temp2[j + playerNum * 4] = wagers[j];
+                    }
+                    view.setBets(temp);
+                    view.setWagers(temp2);
+                    frame.dispose();
+                }
+                button.setVisible(false);
                 placedBets.add(button.getLocation());
                 repaint();
             });
@@ -92,7 +110,22 @@ public class BettingTable extends JPanel {
             }
             BetButton button = new BetButton(i, x, y, 118, 55);
             button.addActionListener(e -> {
-                System.out.println(button.getBetVal());
+                //System.out.println(button.getBetVal());
+                betVals[betNumber] = (byte) button.getBetVal();
+                wagers[betNumber] = Short.parseShort(wagerField.getText());
+                betNumber++;
+                if (betNumber == 4) {
+                    byte[] temp = view.getBets();
+                    short[] temp2 = view.getWagers();
+                    for (int j = 0; j < betVals.length; j++) {
+                        temp[j + playerNum * 4] = betVals[j];
+                        temp2[j + playerNum * 4] = wagers[j];
+                    }
+                    view.setBets(temp);
+                    view.setWagers(temp2);
+                    frame.dispose();
+                }
+                button.setVisible(false);
                 placedBets.add(button.getLocation());
                 repaint();
             });
@@ -111,7 +144,22 @@ public class BettingTable extends JPanel {
             }
             BetButton button = new BetButton(i, x, y, 244, 67);
             button.addActionListener(e -> {
-                System.out.println(button.getBetVal());
+                //System.out.println(button.getBetVal());
+                betVals[betNumber] = (byte) button.getBetVal();
+                wagers[betNumber] = Short.parseShort(wagerField.getText());
+                betNumber++;
+                if (betNumber == 4) {
+                    byte[] temp = view.getBets();
+                    short[] temp2 = view.getWagers();
+                    for (int j = 0; j < betVals.length; j++) {
+                        temp[j + playerNum * 4] = betVals[j];
+                        temp2[j + playerNum * 4] = wagers[j];
+                    }
+                    view.setBets(temp);
+                    view.setWagers(temp2);
+                    frame.dispose();
+                }
+                button.setVisible(false);
                 placedBets.add(button.getLocation());
                 repaint();
             });
@@ -124,13 +172,28 @@ public class BettingTable extends JPanel {
         for (int i = 49; i <= 51; i++) {
             if (i == 49) {
                 x = 885;
-                y = 12;
+                y = 180;
             } else {
-                y += 84;
+                y -= 84;
             }
             BetButton button = new BetButton(i, x, y, 50, 77);
             button.addActionListener(e -> {
-                System.out.println(button.getBetVal());
+                //System.out.println(button.getBetVal());
+                betVals[betNumber] = (byte) button.getBetVal();
+                wagers[betNumber] = Short.parseShort(wagerField.getText());
+                betNumber++;
+                if (betNumber == 4) {
+                    byte[] temp = view.getBets();
+                    short[] temp2 = view.getWagers();
+                    for (int j = 0; j < betVals.length; j++) {
+                        temp[j + playerNum * 4] = betVals[j];
+                        temp2[j + playerNum * 4] = wagers[j];
+                    }
+                    view.setBets(temp);
+                    view.setWagers(temp2);
+                    frame.dispose();
+                }
+                button.setVisible(false);
                 placedBets.add(button.getLocation());
                 repaint();
             });
@@ -177,8 +240,9 @@ public class BettingTable extends JPanel {
             add(modeButton);
         }
 
-        clearButtons();
-        line(lineList);
+        wagerField = new JTextField("300");
+        wagerField.setBounds(885, 350, 100, 30);
+        add(wagerField);
 
         try {
             tableImg = ImageIO.read(new File("resources/bettingTable.png"));
