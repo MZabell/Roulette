@@ -6,7 +6,8 @@ public class BetModeButton extends JButton {
         return mode;
     }
 
-    private int mode;
+    private final int mode;
+
     public BetModeButton(String text, int mode, int x, int y, int w, int h) {
         this.mode = mode;
         setText(text);

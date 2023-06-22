@@ -19,6 +19,7 @@ public class BettingTable extends JPanel {
     short[] wagers;
     JTextField wagerField;
     int arg2 = 0, mode = 0, betNumber = 0;
+
     public BettingTable(JFrame frame, View view, int playerNum) {
         setLayout(null);
         setVisible(true);
@@ -57,8 +58,8 @@ public class BettingTable extends JPanel {
                     byte[] temp = view.getBets();
                     short[] temp2 = view.getWagers();
                     for (int j = 0; j < betVals.length; j++) {
-                            temp[j + playerNum * 4] = betVals[j];
-                            temp2[j + playerNum * 4] = wagers[j];
+                        temp[j + playerNum * 4] = betVals[j];
+                        temp2[j + playerNum * 4] = wagers[j];
                     }
                     view.setBets(temp);
                     view.setWagers(temp2);
@@ -88,25 +89,15 @@ public class BettingTable extends JPanel {
 
         for (int i = 40; i <= 45; i++) {
             switch (i) {
-                case 40:
+                case 40 -> {
                     x = 380;
                     y = 343;
-                    break;
-                case 41:
-                    x += 126;
-                    break;
-                case 42:
-                    x = 254;
-                    break;
-                case 43:
-                    x = 632;
-                    break;
-                case 44:
-                    x = 128;
-                    break;
-                case 45:
-                    x = 757;
-                    break;
+                }
+                case 41 -> x += 126;
+                case 42 -> x = 254;
+                case 43 -> x = 632;
+                case 44 -> x = 128;
+                case 45 -> x = 757;
             }
             BetButton button = new BetButton(i, x, y, 118, 55);
             button.addActionListener(e -> {
@@ -213,29 +204,15 @@ public class BettingTable extends JPanel {
                 y += 23;
             }
             switch (i) {
-                case 0:
-                    modeButton = new BetModeButton("Straight Up", i, x, y, 115, 20);
-                    break;
-                case 1:
-                    modeButton = new BetModeButton("Street", i, x, y, 115, 20);
-                    break;
-                case 2:
-                    modeButton = new BetModeButton("Line", i, x, y, 115, 20);
-                    break;
-                case 3:
-                    modeButton = new BetModeButton("Corner", i, x, y, 115, 20);
-                    break;
-                case 4:
-                    modeButton = new BetModeButton("Row Split", i, x, y, 115, 20);
-                    break;
-                case 5:
-                    modeButton = new BetModeButton("Column Split", i, x, y, 115, 20);
-                    break;    
+                case 0 -> modeButton = new BetModeButton("Straight Up", i, x, y, 115, 20);
+                case 1 -> modeButton = new BetModeButton("Street", i, x, y, 115, 20);
+                case 2 -> modeButton = new BetModeButton("Line", i, x, y, 115, 20);
+                case 3 -> modeButton = new BetModeButton("Corner", i, x, y, 115, 20);
+                case 4 -> modeButton = new BetModeButton("Row Split", i, x, y, 115, 20);
+                case 5 -> modeButton = new BetModeButton("Column Split", i, x, y, 115, 20);
             }
             int mode2 = modeButton.getMode();
-            modeButton.addActionListener(e -> {
-                mode = mode2;
-            });
+            modeButton.addActionListener(e -> mode = mode2);
             modeButtons.add(modeButton);
             add(modeButton);
         }

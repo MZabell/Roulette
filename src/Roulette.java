@@ -1,19 +1,17 @@
 import javax.swing.*;
-import javax.swing.Timer;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ArrayBlockingQueue;
 
-public class Roulette implements SerialConnectionHandler.SerialListener{
+public class Roulette implements SerialConnectionHandler.SerialListener {
 
-    private View view;
+    private final View view;
 
     private boolean isAccel = true, isDeaccel = false, isHit = false, isStringsLoad = false;
 
     Timer timer, timer1, timer2;
 
-    Integer[] list = {0,26,3,35,12,28,7,29,18,22,9,31,14,20,1,33,16,24,5,10,23,8,30,11,36,13,27,6,34,17,25,2,21,4,19,15,32};
+    Integer[] list = {0, 26, 3, 35, 12, 28, 7, 29, 18, 22, 9, 31, 14, 20, 1, 33, 16, 24, 5, 10, 23, 8, 30, 11, 36, 13, 27, 6, 34, 17, 25, 2, 21, 4, 19, 15, 32};
 
     int rng;
     private double i = 0.01, angle = 0.01, mul2 = Math.toRadians(360), factor = mul2;
@@ -22,7 +20,7 @@ public class Roulette implements SerialConnectionHandler.SerialListener{
         return serialConn;
     }
 
-    private SerialConnectionHandler serialConn;
+    private final SerialConnectionHandler serialConn;
 
     Integer[] credList;
 
@@ -33,41 +31,22 @@ public class Roulette implements SerialConnectionHandler.SerialListener{
     String[] textAreaStrings;
 
     long startTime;
+
     public Roulette() {
         this.view = new View(this);
         Frame frame = new Frame();
         frame.getContentPane().add(view);
         frame.pack();
 
-        //Random random = new Random();
-        //rng = random.nextInt(36);
-        //System.out.println(rng);
-
         credList = new Integer[4];
         textAreaStrings = new String[4];
-        spinHistory =  new ArrayList<>();
+        spinHistory = new ArrayList<>();
+
         for (int k = 0; k < 4; k++) {
-            spinHistory.add(new ArrayBlockingQueue<String>(10) {
+            spinHistory.add(new ArrayBlockingQueue<>(10) {
             });
         }
         serialConn = new SerialConnectionHandler(this);
-
-        /*serialConn.read();*/
-
-        /*System.arraycopy(names.getBytes(), 0, data, 0, 24);
-        System.arraycopy(bets,);*/
-
-            /*Scanner scanner = new Scanner(System.in);
-            byte[] data;
-            String s;
-            while (true) {
-                s = scanner.nextLine() + "\n";
-                data = new byte[s.length()];
-                for (int j = 0; j < s.length(); j++) {
-                    data[j] = (byte) s.charAt(j);
-                }
-                serialConn.write(data);
-            }*/
     }
 
     private void spin() {
@@ -76,23 +55,17 @@ public class Roulette implements SerialConnectionHandler.SerialListener{
 
         if (isAccel) {
             i *= 1.08;
-            //angle *= 1.08;
-            //System.out.println("Hello1");
-        } else if (!isDeaccel){
-                i *= 1.04;
-                //angle *= 1.04;
-                //System.out.println("Hello2");
-            } else if (!isHit) {
-                i += factor;
-                factor *= 0.98;
-                } else {
-                    mul2 *= 0.98;
-                    i += mul2;
-                }
-                //angle /= 1.04;
-                //System.out.println("Hello3");
+        } else if (!isDeaccel) {
+            i *= 1.04;
+        } else if (!isHit) {
+            i += factor;
+            factor *= 0.98;
+        } else {
+            mul2 *= 0.98;
+            i += mul2;
+        }
 
-            angle = i;
+        angle = i;
 
         if (angle >= Math.toRadians(360)) {
             angle = i % Math.toRadians(360);
@@ -101,7 +74,6 @@ public class Roulette implements SerialConnectionHandler.SerialListener{
         view.transform(angle);
 
         if ((Math.abs(angle - stopAngle) < 0.1) && isDeaccel) {
-            //System.out.println("Hit!");
             isHit = true;
         }
 
@@ -148,52 +120,47 @@ public class Roulette implements SerialConnectionHandler.SerialListener{
         }
 
     }
+
     @Override
     public void onValueRead(short s, int i) {
-            System.out.println("Abedula: " + s);
-            if (!isStringsLoad) {
-                for (int k = 0; k < view.getTextAreas().size(); k++) {
-                    textAreaStrings[k] = view.getTextAreas().get(k).getText();
-                }
-                isStringsLoad = true;
+        System.out.println("READVAL: " + s);
+        if (!isStringsLoad) {
+            for (int k = 0; k < view.getTextAreas().size(); k++) {
+                textAreaStrings[k] = view.getTextAreas().get(k).getText();
             }
-            if (i == 2) {
-                rng = s;
-                isAccel = true;
-                isDeaccel = false;
-                timer1 = new Timer(1000, e1 -> {
-                    isAccel = false;
-                });
-                timer1.start();
+            isStringsLoad = true;
+        }
+        if (i == 2) {
+            rng = s;
+            isAccel = true;
+            isDeaccel = false;
+            timer1 = new Timer(1000, e1 -> isAccel = false);
+            timer1.start();
 
-                startTime = System.currentTimeMillis();
-                timer = new Timer(20, e -> {
-                    spin();
-                });
-                timer.start();
+            startTime = System.currentTimeMillis();
+            timer = new Timer(20, e -> spin());
+            timer.start();
 
-                timer2 = new Timer(2000, e3 -> {
-                    isDeaccel = true;
-                });
-                timer2.start();
-            }
-            if (i > 2 && i < 7) {
-                credList[i - 3] = (int) s;
-                if (i == 6) {
-                    for (int k = 0; k < 4; k++) {
-                            int deltaWager = 0;
-                            for (int d = 0; d < 4; d++) {
-                                deltaWager += view.getWagers2()[d + k * 4];
-                            }
-                            temp[k] = view.getPlayerChips()[k] + credList[k] - deltaWager;
+            timer2 = new Timer(2000, e3 -> isDeaccel = true);
+            timer2.start();
+        }
+        if (i > 2 && i < 7) {
+            credList[i - 3] = (int) s;
+            if (i == 6) {
+                for (int k = 0; k < 4; k++) {
+                    int deltaWager = 0;
+                    for (int d = 0; d < 4; d++) {
+                        deltaWager += view.getWagers2()[d + k * 4];
                     }
-                    view.setPlayerChips(temp);
-                    isHit = false;
-                    this.i = 0.01;
-                    angle = 0.01;
-                    mul2 = Math.toRadians(360);
-                    factor = mul2;
+                    temp[k] = view.getPlayerChips()[k] + credList[k] - deltaWager;
                 }
+                view.setPlayerChips(temp);
+                isHit = false;
+                this.i = 0.01;
+                angle = 0.01;
+                mul2 = Math.toRadians(360);
+                factor = mul2;
             }
+        }
     }
 }

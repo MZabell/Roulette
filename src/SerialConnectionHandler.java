@@ -1,19 +1,12 @@
 import com.fazecast.jSerialComm.SerialPort;
 
-import java.util.Arrays;
-
 public class SerialConnectionHandler {
 
     private SerialPort serialPort;
     private Thread serialThread;
     private boolean isRunning = false;
     private static final String PORT_DESCRIPTION = "TTL232R-3V3";
-    private static final byte START_MARKER = '<';
 
-    public boolean isConnected() {
-        return isConnected;
-    }
-    private boolean isConnected = false;
     SerialListener listener;
 
     public SerialConnectionHandler(SerialListener listener) {
@@ -48,17 +41,7 @@ public class SerialConnectionHandler {
                     readBuffer = new byte[1];
                 }
                 serialPort.readBytes(readBuffer, readBuffer.length);
-                //System.out.println(Arrays.toString(readBuffer));
-                //if (readBuffer[0] != START_MARKER) continue;
-
-
-                /*int data = 0;
-                for (int i = 0; i < readBuffer.length; i++) {
-                    data = data << 8;
-                    data |= readBuffer[i] & 0xff;
-                }*/
                 System.out.flush();
-                //char c = (char) readBuffer[0];
                 short s = readBuffer[0];
                 if (i > 1) {
                     s = (short) (s << 8);
@@ -82,8 +65,8 @@ public class SerialConnectionHandler {
 
     public void write(byte[] writeBuffer) {
         serialThread = new Thread(() -> {
-                serialPort.writeBytes(writeBuffer, writeBuffer.length);
-                System.out.flush();
+            serialPort.writeBytes(writeBuffer, writeBuffer.length);
+            System.out.flush();
             try {
                 serialThread.join();
             } catch (InterruptedException e) {
@@ -91,15 +74,6 @@ public class SerialConnectionHandler {
             }
         });
         serialThread.start();
-    }
-    public void stopSerial() {
-        isRunning = false;
-        try {
-            serialThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        serialPort.closePort();
     }
 
     public interface SerialListener {

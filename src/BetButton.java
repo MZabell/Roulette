@@ -6,7 +6,7 @@ public class BetButton extends JButton {
         return betVal;
     }
 
-    private int betVal;
+    private final int betVal;
 
     public int getArg2() {
         return arg2;
@@ -17,6 +17,7 @@ public class BetButton extends JButton {
     }
 
     private int arg2;
+
     public BetButton(int betVal, int x, int y, int w, int h) {
         this.betVal = betVal;
         setBounds(x, y, w, h);

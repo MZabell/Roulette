@@ -48,10 +48,6 @@ public class View extends JPanel {
 
     Integer[] playerChips;
 
-    public String[] getNames() {
-        return names;
-    }
-
     String[] names;
 
     Roulette roulette;
@@ -121,7 +117,7 @@ public class View extends JPanel {
                 names[addButtons.indexOf(b)] = playerName.toString();
                 JTextArea textArea = new JTextArea(playerName + "'s History\n");
                 textArea.setLocation(b.getLocation());
-                textArea.setSize(200,300);
+                textArea.setSize(200, 300);
                 textArea.setEditable(false);
                 textArea.setCaretColor(textArea.getBackground());
                 textArea.setFont(new Font("Robotto", Font.BOLD, 15));
@@ -148,7 +144,8 @@ public class View extends JPanel {
                         try {
                             Popup popup = pf.getPopup(null, popupFrame, 0, 0);
                             popup.show();
-                        } catch (IllegalArgumentException ignored) {}
+                        } catch (IllegalArgumentException ignored) {
+                        }
                         popupFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                     });
                 }
@@ -214,9 +211,7 @@ public class View extends JPanel {
 
         transform(0);
 
-        for (int i = 0; i < bets.length; i++) {
-            bets[i] = (byte) (41);
-        }
+        Arrays.fill(bets, (byte) (41));
     }
 
     public void transform(double i) {
@@ -235,10 +230,10 @@ public class View extends JPanel {
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHints(rh);
 
-            g2d.drawImage(backgroundImg, 0, 0, (int) getPreferredSize().getWidth(), (int) getPreferredSize().getHeight(), null);
-            g2d.drawImage(op.filter(wheelImg, null), (int) getPreferredSize().getWidth() / 2 - wheelImg.getWidth() / 2, (int) getPreferredSize().getHeight() / 2 - wheelImg.getHeight() / 2, null);
-            g2d.setStroke(new BasicStroke(5));
-            g2d.setColor(Color.ORANGE);
-            g2d.drawLine((int) getPreferredSize().getWidth() / 2, (int) getPreferredSize().getHeight() / 2 - wheelImg.getHeight() / 2 - 10 , (int) getPreferredSize().getWidth() / 2, (int) getPreferredSize().getHeight() / 2 - wheelImg.getHeight() / 2 + 50);
+        g2d.drawImage(backgroundImg, 0, 0, (int) getPreferredSize().getWidth(), (int) getPreferredSize().getHeight(), null);
+        g2d.drawImage(op.filter(wheelImg, null), (int) getPreferredSize().getWidth() / 2 - wheelImg.getWidth() / 2, (int) getPreferredSize().getHeight() / 2 - wheelImg.getHeight() / 2, null);
+        g2d.setStroke(new BasicStroke(5));
+        g2d.setColor(Color.ORANGE);
+        g2d.drawLine((int) getPreferredSize().getWidth() / 2, (int) getPreferredSize().getHeight() / 2 - wheelImg.getHeight() / 2 - 10, (int) getPreferredSize().getWidth() / 2, (int) getPreferredSize().getHeight() / 2 - wheelImg.getHeight() / 2 + 50);
     }
 }
